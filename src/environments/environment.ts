@@ -3,7 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  rest_proto: 'https://',
+  socket_proto: 'wss://',
+  apiurl : 'dev.flytbase.com',
+  rest_parm : '/rest',
+  socket_parm : '/websocket',
+  stream_start_url : 'https://dev.flytbase.com/stream/start/',
+  stream_stop_url : 'https://dev.flytbase.com/stream/stop/',
+  namespace_url : '/ros/get_global_namespace',
+  arourl : 'http://localhost:8080/index.php',
 };
 
 /*
