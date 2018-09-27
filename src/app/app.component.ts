@@ -2,7 +2,8 @@ import { Component,OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import {environment} from '../environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-
+import {StateService} from './services/state.service';
+import { RestService } from './services/rest.service';
 
 @Component({
   selector: 'app-root',
@@ -18,46 +19,43 @@ export class AppComponent implements OnInit {
   remember = false;
   url = environment.rest_proto + environment.apiurl + environment.rest_parm;
 
-  constructor(private elementRef:ElementRef, public http: HttpClient,private toastr: ToastrService) {}
+  constructor(private elementRef:ElementRef, public http: HttpClient, private toastr: ToastrService, public state: StateService, public rest:RestService) {}
 
 
 
     ngOnInit() {
-      if (sessionStorage.getItem('VehicleID') === null || sessionStorage.getItem('Authorization') === null) {
-        if (localStorage.getItem('VehicleID') !== null && localStorage.getItem('Authorization') !== null) {
-          this.vid = localStorage.getItem('VehicleID');
-          this.token = localStorage.getItem('Authorization').split(' ')[1];
-          this.remember = true;
-        } else {
+      
+      const intervl = setInterval(() => {
+        
+        this.state.data['VehicleID'] = localStorage.getItem('VehicleID');
+        this.state.data['Authorization'] = localStorage.getItem('Authorization');
+        if (localStorage.getItem('namespace') !== undefined) {
+          this.state.data['namespace'] = localStorage.getItem('namespace');
+          clearInterval(intervl);
         }
-      } else {
-        this.vid = sessionStorage.getItem('VehicleID');
-        this.token = sessionStorage.getItem('Authorization').split(' ')[1];
-        this.remember = true;
-      }
+      }, 1000);
 
-      console.log('gamepad', this.gamePad);
-      this.login();
+
+      this.state.data['Authorization'] = localStorage.getItem('Authorization');
+      this.state.data['VehicleID'] = localStorage.getItem('VehicleID');
+
+      console.log(this.state.data);
+
+      const httpOptions = {
+        headers: new HttpHeaders({'Authorization': this.state.data['Authorization'], 'VehicleID': this.state.data['VehicleID']})
+      };
+
+      const new_url = this.url + environment.namespace_url;
+      console.log(new_url);
+      console.log(httpOptions);
+      
+      this.http.get(new_url, httpOptions).subscribe(data => {
+           console.log(data);
+         }, error => {
+           console.log(error);
+         });
+
     }
-
-
-    login(){
-
-    const token = 'Token ' + this.token;
-
-    const httpOptions = {
-      headers: new HttpHeaders({'Authorization': token, 'VehicleID': this.vid})
-    };
-    console.log(httpOptions);
-    const new_url = this.url + environment.namespace_url;
-    this.http.get(new_url, httpOptions).subscribe(data => {
-      console.log(data);
-    }, error => {
-      console.log(error);
-      this.toastr.error('Error To Proceed');
-    });
-    }
-    
     
   }
 

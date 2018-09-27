@@ -1,4 +1,8 @@
+<div class="container">
+  <button type="button" class="btn btn-primary" (click)= "startJoystickNav()" >Start</button>
+</div>
 
+<div class="container"> 
 <div id="sol" class="nodisp">Gamepads don't appear to be supported
     on this browser.  Bummer.</div>
   
@@ -40,7 +44,7 @@
   
       <div id="template-gamepad-axis-pair-container" class="gamepad-axis-pair-container">
         <div class="gamepad-axis-pair">
-          <div class="gamepad-circle nodisp"></div>
+          <div class="gamepad-circle nodisp" (change)="getChange()"></div>
           <div class="gamepad-axis-pip"></div>
           <div class="gamepad-axis-crosshair">
             <div class="gamepad-axis-crosshair-v"></div>
@@ -51,3 +55,4 @@
         <div class="gamepad-axis-pair-value"></div>
       </div>
     </div>
+</div>
