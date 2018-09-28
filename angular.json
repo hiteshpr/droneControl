@@ -24,10 +24,7 @@
             ],
             "styles": [
             ],
-            "scripts": [
-              "src/assets/joystickControls/libgp.js",
-              "src/assets/joystickControls/libhtml.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

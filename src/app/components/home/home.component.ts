@@ -250,8 +250,6 @@ export class HomeComponent implements OnInit {
       
 			for (j = 0; j < axesBoxCount; j++) {
 
-        let prevBtnValueArray = this.buttonValueArray[j];
-
 				let axisPairContainer = this.qs("#gamepad-" + i + "-axis-pair-container-" + j, axesBox);
         let axisPairValue = this.qs(".gamepad-axis-pair-value", axisPairContainer);
 				let axisPip = this.qs(".gamepad-axis-pip", axisPairContainer);
@@ -301,22 +299,62 @@ export class HomeComponent implements OnInit {
 						axisPip.style.top = (clampY + 1) / 2 * 100 + '%';
 
 						clampCircle.classList.remove("nodisp");
-
 						// Overwrite the value string with clamped values
 						valueStr = clampX.toFixed(2) + ',' + clampY.toFixed(2);			
         }
         
         axisPairValue.innerHTML = valueStr;
-        this.buttonValueArray[j] = valueStr;
+
+        valueStr = valueStr.split(",");
         
-        if(this.buttonValueArray[j] != prevBtnValueArray){
-          // call update API
-          if(j == 0) 
-            console.log('Throttle');
-          else if(j == 1)
-            console.log('Elevator');
-          console.log('valueUpdated');
-          console.log(this.buttonValueArray[j]);
+        // Yaw Value
+        if( j == 0){
+          
+          let prevYawValue = this.buttonValueArray[j];
+          let newYawValue = valueStr[0];
+          //console.log('value',valueStr);
+          // Check for Yaw Value Change; if Yes, call Gimbal API
+          if(newYawValue != prevYawValue){
+            //call gimbal api; 
+            
+            this.buttonValueArray[0] = newYawValue;
+            
+            //if API successful update the buttonValueArray; 
+
+            this.rest.setGimbalControl(this.buttonValueArray).subscribe((data) => {
+              console.log('success', data);
+              //this.buttonValueArray[0] = newYawValue;
+            },
+            (error) => {
+              console.log(error);
+              
+            });
+
+          }
+
+        }
+
+        // Pitch Value
+        else if(j == 1){
+
+          let prevPitchValue = this.buttonValueArray[j];
+          let newPitchValue = valueStr[1];
+          // Check for Pitch change; if Yes, call gimbal API
+          if(newPitchValue != prevPitchValue){
+            //call gimbal api; 
+            this.buttonValueArray[1] = newPitchValue;
+            //If API successful update the buttonValueArray
+
+            this.rest.setGimbalControl(this.buttonValueArray).subscribe((data) => {
+              console.log('success', data);
+              //this.buttonValueArray[1] = newPitchValue
+            },
+            (error) => {
+              console.log(error);
+              
+            });
+
+          }
         }
 
 			}
@@ -329,10 +367,7 @@ export class HomeComponent implements OnInit {
       console.log('change recorded');
     }
 
-    startJoystickNav(){
-      console.log('joystick nav');
-      this.rest.setVelocityWaypoint();
-    }
+  
 
 
 

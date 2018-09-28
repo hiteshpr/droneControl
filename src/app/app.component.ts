@@ -42,18 +42,19 @@ export class AppComponent implements OnInit {
       console.log(this.state.data);
 
       const httpOptions = {
-        headers: new HttpHeaders({'Authorization': this.state.data['Authorization'], 'VehicleID': this.state.data['VehicleID']})
+        headers: new HttpHeaders({'Authorization': 'Token ' + this.state.data['Authorization'], 'VehicleID': this.state.data['VehicleID']})
       };
 
       const new_url = this.url + environment.namespace_url;
-      console.log(new_url);
-      console.log(httpOptions);
       
       this.http.get(new_url, httpOptions).subscribe(data => {
-           console.log(data);
-         }, error => {
+          this.state.namespace = data['param_info']['param_value'];
+         
+      }, error => {
+        // this.toastr.error(error);
            console.log(error);
-         });
+        
+      });
 
     }
     
